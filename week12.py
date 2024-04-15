@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption('pong')
 
 #t
-font = pygame.font.sysfont('Constantia', 30)
+font = pygame.font.SysFont('Constantia', 30)
 #define game variable
 live_ball = False
 margin = 50
@@ -35,15 +35,15 @@ def draw_board():
 
 
 
-def draw_text(text,font,text_cot,x,y):
-    img = font.render(text, true, text_col)
+def draw_text(text,font,text_col,x,y):
+    img = font.render(text, True, text_col)
     screen.blit(img,(x, y))
 
 class paddle():
     def __init__(self, x, y):
-        self.x = y
+        self.x = x
         self.y = y
-        self.rect = rect(self.x, self.y 20, 100)
+        self.rect = Rect(self.x, self.y, 20, 100)
         self.speed = 6
 
 
@@ -53,14 +53,14 @@ class paddle():
         if self.rect.centery < pong.rect.top and self.rect.bottom < screen_height:
             self.rect.move_ip(0, self.speed)
         # move up
-        if self.rect.centery > pong.rect.bottom and self.rect.top > screen_height:
+        if self.rect.centery > pong.rect.bottom and self.rect.top > margin:
             self.rect.move_ip(0, -1 * self.speed)
 
     def move(self):
-        key = pygame.key.get_present()
-        if key[pygame.k_UP] and self.rect.top > margin:
+        key = pygame.key.get_pressed()
+        if key[pygame.K_UP] and self.rect.top > margin:
             self.rect.move_ip(0, -1 * self.speed)
-        if key[pygame.k_DOWN] and self.rect.bottom < screen_height:
+        if key[pygame.K_DOWN] and self.rect.bottom < screen_height:
             self.rect.move_ip(0, self.speed)
 
 
@@ -94,13 +94,13 @@ class ball():
 
         #update ball postition
         self.rect.x += self.speed_x
-        self.rect += self.speed_y
+        self.rect.y += self.speed_y
 
         return self.winner
 
 
     def draw(self):
-        pygame.draw.cicle(screen, white, (self.rect.x + self.ball_rad), self.ball_rad)
+        pygame.draw.circle(screen, white, (self.rect.x + self.ball_rad,self.rect.y + self.ball_rad), self.ball_rad)
 
     def reset(self, x, y):
         self.x = x
@@ -120,10 +120,10 @@ cpu_paddle = paddle(20, screen_height // 2)
 
 
 #create pong ball
-pong.ball(screen_width - 60, screen_height // 2 + 50)
+pong = ball(screen_width - 60, screen_height // 2 + 50)
 
 
-run = true
+run = True
 while run:
 
     fpsClock.tick(fps)
@@ -131,13 +131,13 @@ while run:
     draw_board()
     draw_text('CPU: ' + str(cpu_score), font, white, 20,15)
     draw_text('P1: ' + str(player_score), font, white, screen_width -100, 15)
-    draw_text('BALL SPEED: ', + str(abs(pong.speed_x)), font white, screen_width // 2 - 100, 15)
+    draw_text('BALL SPEED: ' + str(abs(pong.speed_x)), font, white, screen_width // 2 - 100, 15)
 
     #draw paddles
     player_paddle.draw()
     cpu_paddle.draw()
 
-    if live.ball == True:
+    if live_ball == True:
         speed_increase += 1
         #move ball
         winner = pong.move()
@@ -148,7 +148,7 @@ while run:
             #draw ball
             pong.draw()
         else:
-            live.ball = False
+            live_ball = False
             if winner == 1:
                 player_score += 1
             elif winner ==-1:
@@ -156,13 +156,13 @@ while run:
 
 
     #print player instructions
-    if live.ball == False:
+    if live_ball == False:
         if winner == 0:
             draw_text('CLICK ANYWHERE TO START', font, white, 100, screen_height // 2 -100)
         if winner == 1:
             draw_text(' YOU SCORED!!', font, white, 220, screen_height // 2 -100)
             draw_text('CLICK ANYWHERE TO START', font, white, 100, screen_height // 2 -50)
-        if winner == -1
+        if winner == -1:
             draw_text('CPU SCORED;)', font, white, 220, screen_height // 2 -100)
             draw_text('CLICK ANYWHERE TO START', font, white, 100, screen_height // 2 -50)
 
@@ -177,8 +177,8 @@ while run:
     for event in pygame.event.get():
         if event.type ==pygame.QUIT:
             run = False
-        if event.type == pygame.MOUSEBOTTOM and live_ball == False:
-            live.ball = True
+        if event.type == pygame.MOUSEBUTTONDOWN and live_ball == False:
+            live_ball = True
             pong.reset(screen_width - 60, screen_height // 2 + 50)
 
     if speed_increase > 600:
