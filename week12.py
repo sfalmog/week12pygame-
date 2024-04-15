@@ -12,7 +12,7 @@ fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption('pong')
 
-#test
+#t
 font = pygame.font.sysfont('Constantia', 30)
 #define game variable
 live_ball = False
